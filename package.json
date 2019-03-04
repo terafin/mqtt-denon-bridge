@@ -1,0 +1,22 @@
+{
+    "name": "mqtt-denon-bridge",
+    "version": "0.0.1",
+    "description": "MQTT <-> denon bridge",
+    "license": "MIT",
+    "main": "mqtt-presence.js",
+    "repository": {
+        "url": "https://github.com/terafin/mqtt-denon-bridge.js"
+    },
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "homeautomation-js-lib": "git://github.com/terafin/homeautomation-js-lib.git",
+        "denon-client": "git://github.com/terafin/node-denon-client.git",
+        "lodash": "latest",
+        "mqtt": "latest"
+    },
+    "engines": {
+        "node": ">=4"
+    }
+}
