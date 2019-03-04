@@ -14,7 +14,6 @@
         "TOPIC_PREFIX": "/denon_test",
         "MQTT_HOST": "mqtt://mqtt",
         "MQTT_USER": "home",
-        "MQTT_PASS": "xa-QWClDjyeULyaeVNvjGPF6vzXYue4y",
         "AVR_IP": "10.0.2.171",
         "AVR_PORT": "23"
       }
