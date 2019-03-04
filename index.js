@@ -47,9 +47,9 @@ mqtt.on('message', (inTopic, inPayload) => {
       
 	const parts = topic.split('/')
 
-	switch (parts[1]) {
+	switch (parts[parts.length - 2]) {
 		case 'set':
-			switch (parts[2]) {
+			switch (parts[parts.length - 1]) {
 				case 'input':
 					logging.info(' => changing input: ' + inPayload)
 					denon_commands.performDenonInputCommand(inPayload)
