@@ -6,7 +6,7 @@ const logging = require('homeautomation-js-lib/logging.js')
 const AVR_IP = process.env.AVR_IP
 const AVR_PORT = process.env.AVR_PORT
 
-const mqttOptions = {retain: true, qos: 2}
+const mqttOptions = {retain: true, qos: 1}
 
 
 if (_.isNil(AVR_IP)) {
