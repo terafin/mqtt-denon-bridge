@@ -23,7 +23,7 @@ const mqtt = Mqtt.setupClient(function() {
 	mqttConnected = true
 
 	logging.info('mqtt subscribe: ' + topic_prefix + '/set/#')
-	mqtt.subscribe(topic_prefix + '/set/#', {qos: 2})
+	mqtt.subscribe(topic_prefix + '/set/#', {qos: 1})
 	denon_commands.setMQTTClient(mqtt, topic_prefix)
 }, function() {
 	if (mqttConnected) {
