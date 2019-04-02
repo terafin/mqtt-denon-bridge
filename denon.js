@@ -68,7 +68,7 @@ const performDenonCommand = function(functionName) {
 		.catch((error) => {
 			console.error(error)
 		})
-    
+
 	return true
 }
 
@@ -78,12 +78,12 @@ module.exports.performDenonPowerCommand = function(name) {
 	const value = denonPowerCommands[name]
 
 	if (!_.isNil(value)) {
-		if ( value == Denon.Options.PowerOptions.On ) {
-			return performDenonCommand( function(){
+		if (value == Denon.Options.PowerOptions.On) {
+			return performDenonCommand(function() {
 				return denonClient.setZone1(Denon.Options.PowerOptions.On)
 			})
 		} else {
-			return performDenonCommand( function(){
+			return performDenonCommand(function() {
 				return denonClient.setPower(Denon.Options.PowerOptions.Standby)
 			})
 		}
@@ -97,7 +97,7 @@ module.exports.performDenonVolumeCommand = function(name) {
 	const value = denonVolumeCommands[name]
 
 	if (!_.isNil(value)) {
-		return performDenonCommand( function(){
+		return performDenonCommand(function() {
 			return denonClient.setVolume(value)
 		})
 	}
@@ -108,13 +108,13 @@ module.exports.performDenonVolumeCommand = function(name) {
 module.exports.performDenonMuteCommand = function(name) {
 	denonClient.connect()
 
-	if (name === 'toggle') {
+	if (name == 'toggle') {
 		denonClient.getMute().then((isMuted) => {
 			logging.info('is muted: ' + isMuted)
 			if (isMuted == 'OFF') {
 				module.exports.onButtonPressed('mute_on')
 			} else {
-				module.exports.onButtonPressed('mute_off') 
+				module.exports.onButtonPressed('mute_off')
 			}
 
 		})
@@ -124,7 +124,7 @@ module.exports.performDenonMuteCommand = function(name) {
 		const value = denonMuteCommands[name]
 
 		if (!_.isNil(value)) {
-			return performDenonCommand( function(){
+			return performDenonCommand(function() {
 				denonClient.setMute(value)
 			})
 		}
@@ -138,7 +138,7 @@ module.exports.performDenonInputCommand = function(name) {
 	denonClient.connect()
 
 	if (!_.isNil(value)) {
-		return performDenonCommand( function(){
+		return performDenonCommand(function() {
 			denonClient.setInput(value)
 		})
 	}
@@ -151,21 +151,21 @@ var mqttClient = null
 var mqttTopic = null
 
 const publish = function(name, value) {
-	if ( !_.isNil(mqttClient) ) {
+	if (!_.isNil(mqttClient)) {
 		if (_.isNil(value)) {
 			value = '0'
 		}
-        
-		if ( value == 'OFF' ) {
+
+		if (value == 'OFF') {
 			value = '0'
-		} else if ( value == 'STANDBY' ) {
+		} else if (value == 'STANDBY') {
 			value = '0'
-		} else if ( value == 'ON' ) {
+		} else if (value == 'ON') {
 			value = '1'
 		}
-        
+
 		value = value.toString().toLowerCase()
-        
+
 		mqttClient.smartPublish(mqttTopic + '/' + name, value.toString(), mqttOptions)
 	}
 }
@@ -184,13 +184,13 @@ module.exports.onButtonPressed = function onButtonPressed(name) {
 	denonClient.connect()
 
 	var success = this.performDenonPowerCommand(name)
-	if (!success) { 
+	if (!success) {
 		success = this.performDenonVolumeCommand(name)
 	}
 	if (!success) {
 		success = this.performDenonMuteCommand(name)
 	}
-	if (!success) { 
+	if (!success) {
 		success = this.performDenonInputCommand(name)
 	}
 
