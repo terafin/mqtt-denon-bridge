@@ -6,7 +6,7 @@ const _ = require('lodash')
 const logging = require('homeautomation-js-lib/logging.js')
 const denon_commands = require('./denon.js')
 
-require('homeautomation-js-lib/mqtt_helpers.js')
+const mqtt_helpers = require('homeautomation-js-lib/mqtt_helpers.js')
 
 var topic_prefix = process.env.TOPIC_PREFIX
 var mqttConnected = false
@@ -19,7 +19,7 @@ if (_.isNil(topic_prefix)) {
 
 logging.info(pkg.name + ' ' + pkg.version + ' starting')
 
-const mqtt = Mqtt.setupClient(function() {
+const mqtt = mqtt_helpers.setupClient(function() {
 	mqttConnected = true
 
 	logging.info('mqtt subscribe: ' + topic_prefix + '/set/#')

@@ -12,7 +12,7 @@
       "outputCapture": "std",
       "env": {
         "TOPIC_PREFIX": "/denon_test/somewhere",
-        "MQTT_HOST": "mqtt://mqtt",
+        "MQTT_HOST": "mqtt://10.0.1.7",
         "MQTT_USER": "home",
         "MQTT_PASS": "xa-QWClDjyeULyaeVNvjGPF6vzXYue4y",
         "AVR_IP": "10.0.2.171",
