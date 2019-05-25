@@ -11,7 +11,7 @@
         "start": "node index.js"
     },
     "dependencies": {
-        "homeautomation-js-lib": "git://github.com/terafin/homeautomation-js-lib.git",
+        "homeautomation-js-lib": "git+https://gitlab.siliconspirit.net/home/homeautomation-js-lib.git",
         "denon-client": "git://github.com/terafin/node-denon-client.git",
         "lodash": "latest",
         "mqtt": "latest"
