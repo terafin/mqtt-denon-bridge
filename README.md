@@ -47,3 +47,10 @@ services:
 ```
 
 Here's an example publish for my setup:
+
+```
+/living_room/denon/power 1
+/living_room/denon/input mplay
+/living_room/denon/volume 50.5
+/living_room/denon/mute 0
+```
