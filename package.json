@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "homeautomation-js-lib": "https://github.com/terafin/homeautomation-js-lib.git",
-        "denon-client": "https://github.com/terafin/node-denon-client.git",
+        "alt-denonavr": "https://github.com/terafin/denonavr.git",
         "lodash": "latest",
         "mqtt": "latest"
     },
