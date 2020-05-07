@@ -1,22 +1,26 @@
 {
-    "name": "mqtt-denon-bridge",
-    "version": "0.0.1",
-    "description": "MQTT <-> denon bridge",
-    "license": "MIT",
-    "main": "mqtt-presence.js",
-    "repository": {
-        "url": "https://github.com/terafin/mqtt-denon-bridge.js"
-    },
-    "scripts": {
-        "start": "node index.js"
-    },
-    "dependencies": {
-        "homeautomation-js-lib": "https://github.com/terafin/homeautomation-js-lib.git",
-        "alt-denonavr": "https://github.com/terafin/denonavr.git",
-        "lodash": "latest",
-        "mqtt": "latest"
-    },
-    "engines": {
-        "node": ">=4"
-    }
+  "name": "mqtt-denon-bridge",
+  "version": "0.0.1",
+  "description": "MQTT <-> denon bridge",
+  "license": "MIT",
+  "main": "mqtt-presence.js",
+  "repository": {
+    "url": "https://github.com/terafin/mqtt-denon-bridge.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "dependencies": {
+    "homeautomation-js-lib": "https://github.com/terafin/homeautomation-js-lib.git",
+    "alt-denonavr": "https://github.com/terafin/denonavr.git",
+    "lodash": "latest",
+    "mqtt": "latest",
+    "snyk": "^1.319.2"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "snyk": true
 }
