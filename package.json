@@ -14,7 +14,7 @@
         "homeautomation-js-lib": "https://github.com/terafin/homeautomation-js-lib.git",
         "alt-denonavr": "https://github.com/terafin/denonavr.git",
         "lodash": "latest",
-        "mqtt": "latest"
+        "mqtt": "4.1.0"
     },
     "engines": {
         "node": ">=4"
