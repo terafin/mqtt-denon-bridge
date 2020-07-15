@@ -72,6 +72,19 @@ const publish = function(name, value) {
     }
 }
 
+const translateInput = function(input) {
+    var translatedInput = input
+    switch (input) {
+        case 'SAT':
+        case 'CBL':
+            translatedInput = "SAT/CBL"
+
+        default:
+    }
+
+    return _.upperCase(translatedInput)
+}
+
 avr.init((state) => {
     Object.keys(state).forEach(key => {
         const value = state[key]
@@ -82,7 +95,6 @@ avr.init((state) => {
         publish(key, value)
     });
 }, 'AVR-X6400H', AVR_IP)
-
 
 async function processIncomingMQTT(inTopic, inPayload) {
     try {
@@ -102,7 +114,8 @@ async function processIncomingMQTT(inTopic, inPayload) {
                 switch (parts[parts.length - 1]) {
                     case 'input':
                         logging.info(' => changing input: ' + inPayload)
-                        await avr.setInput(_.upperCase(inPayload))
+                        const inputString = translateInput(inPayload)
+                        await avr.setInput(inputString)
                         break
 
                     case 'volume':
