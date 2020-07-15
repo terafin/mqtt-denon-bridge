@@ -73,16 +73,17 @@ const publish = function(name, value) {
 }
 
 const translateInput = function(input) {
-    var translatedInput = input
-    switch (input) {
+    var translatedInput = input.toString()
+
+    switch (translatedInput) {
         case 'SAT':
         case 'CBL':
-            translatedInput = "SAT/CBL"
+            translatedInput = 'SAT/CBL'
 
         default:
     }
 
-    return _.upperCase(translatedInput)
+    return translatedInput.toUpperCase()
 }
 
 avr.init((state) => {
@@ -113,8 +114,8 @@ async function processIncomingMQTT(inTopic, inPayload) {
             case 'set':
                 switch (parts[parts.length - 1]) {
                     case 'input':
-                        logging.info(' => changing input: ' + inPayload)
                         const inputString = translateInput(inPayload)
+                        logging.info(' => changing input: ' + inputString)
                         await avr.setInput(inputString)
                         break
 
