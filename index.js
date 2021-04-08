@@ -87,7 +87,6 @@ const translateInput = function(input) {
 }
 
 avr.init((state) => {
-    logging.info('Connected to: ' + AVR_IP)
     Object.keys(state).forEach(key => {
         const value = state[key]
         if (key == 'unknown') {
