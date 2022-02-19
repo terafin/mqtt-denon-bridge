@@ -5,11 +5,13 @@ const pkg = require('./package.json')
 const _ = require('lodash')
 const logging = require('homeautomation-js-lib/logging.js')
 const mqtt_helpers = require('homeautomation-js-lib/mqtt_helpers.js')
-const avr_factory = require('alt-denonavr')
-const avr = new avr_factory()
+const Denon = require('denon-client');
+const interval = require('interval-promise')
+const queryInterval = 10
 
 const AVR_IP = process.env.AVR_IP
 
+var isConnectedToDenon = false
 var topic_prefix = process.env.TOPIC_PREFIX
 var mqttConnected = false
 const mqttOptions = { retain: true, qos: 1 }
@@ -25,6 +27,8 @@ if (_.isNil(AVR_IP)) {
 }
 
 logging.info(pkg.name + ' ' + pkg.version + ' starting')
+
+const denonClient = new Denon.DenonClient(AVR_IP);
 
 const mqtt = mqtt_helpers.setupClient(function() {
     mqttConnected = true
@@ -86,20 +90,41 @@ const translateInput = function(input) {
     return translatedInput.toUpperCase()
 }
 
-avr.init((state) => {
-    Object.keys(state).forEach(key => {
-        const value = state[key]
-        if (key == 'unknown') {
-            return
-        }
+const sendDenonCommand = function(commandBlock) {
+    denonClient
+    .connect()
+    .then(() => {
+      commandBlock()
+    })
+    .catch((error) => {
+      logging.error('Connection error: ' + error)
+    })
+  
+}
 
-        publish(key, value)
-    });
-}, 'AVR-X6400H', AVR_IP)
+const connect = function() {
+    if ( isConnectedToDenon ) return
+
+    if ( denonClient)
+    sendDenonCommand( function() {
+        logging.info('Connection ping')
+    })    
+}
+
+const startPoll = function() {
+    logging.info('Starting to poll')
+    interval(async() => {
+        connect()
+    }, queryInterval * 1000)
+
+    connect()
+}
+
+startPoll()
 
 async function processIncomingMQTT(inTopic, inPayload) {
     try {
-        // アンプの電源ON/OFF
+        var command = null
         var topic = inTopic
         var payload = String(inPayload)
         logging.info('mqtt <' + topic + ':' + payload)
@@ -116,25 +141,31 @@ async function processIncomingMQTT(inTopic, inPayload) {
                     case 'input':
                         const inputString = translateInput(inPayload)
                         logging.info(' => changing input: ' + inputString)
-                        await avr.setInput(inputString)
+                        command = function() {
+                            denonClient.setInput(inputString)
+                        }
                         break
 
                     case 'volume':
                         logging.info(' => changing volume: ' + inPayload)
-                        await avr.setVolume(Number(inPayload))
+                        command = function() {
+                            denonClient.setVolume(Number(inPayload))
+                        }
                         break
 
                     case 'power':
                         logging.info(' => changing power: ' + inPayload)
-                        if (inPayload == '0')
-                            await avr.off()
-                        else
-                            await avr.on()
+
+                        command = function() {
+                            denonClient.setZone1(inPayload == '0' ? Denon.Options.Zone1Options.Off : Denon.Options.Zone1Options.On)
+                        }
                         break
 
                     case 'mute':
                         logging.info(' => changing mute: ' + inPayload)
-                        await avr.setMute(inPayload == '0' ? false : true)
+                        command = function() {
+                            denonClient.setMute(inPayload == '0' ? Denon.Options.MuteOptions.Off : Denon.Options.MuteOptions.On)
+                        }
                         break
 
                     default:
@@ -145,20 +176,75 @@ async function processIncomingMQTT(inTopic, inPayload) {
         logging.error('processIncomingMQTT Error: ' + e);
     }
 
-    // try {
-    //     // アンプの電源ON/OFF
-    //     await avr.on();
-    //     await avr.off();
-    //     // マスターボリューム変更
-    //     await avr.setVolume(20);
-    //     // ミュート
-    //     await avr.setMute(true);
-    //     // 入力切換
-    //     await avr.setInput('SAT/CBL');
-    //     // ダイナミックボリューム変更
-    //     await avr.setDynaminVolume('MED');
-    //     const result = await avr.getDynamicVolume(); // => MED
-    // } catch (e) {
-    //     console.error(e);
-    // }
+   if ( !_.isNil(command) ) {
+        sendDenonCommand( command )       
+   }
 }
+
+
+denonClient.on('connect', () => {
+    logging.info('connected to denon')
+    isConnectedToDenon = true
+})
+  
+denonClient.on('close', () => {
+    logging.error('connection closed')
+    isConnectedToDenon = false
+})
+  
+denonClient.on('error', (error) => {
+    logging.error('connection error: ' + error)
+    isConnectedToDenon = false
+})
+  
+denonClient.on('displayDimChanged', (value) => {
+    logging.info('displayDimChanged: ' + value)
+    publish('dim', value)
+})
+  
+denonClient.on('inputChanged', (value) => {
+    logging.info('inputChanged: ' + value)
+    publish('input', value)
+})
+  
+denonClient.on('masterVolumeChanged', (value) => {
+    logging.info('masterVolumeChanged: ' + value)
+    publish('volume', value)
+})
+  
+denonClient.on('masterVolumeMaxChanged', (value) => {
+    logging.info('masterVolumeMaxChanged: ' + value)
+    publish('max_volume', value)
+})
+  
+denonClient.on('muteChanged', (value) => {
+    logging.info('muteChanged: ' + value)
+    publish('mute', value)
+})
+  
+denonClient.on('powerChanged', (value) => {
+    logging.info('powerChanged: ' + value)
+    publish('power', value)
+    publish('zone1', value)
+})
+  
+denonClient.on('surroundChanged', (value) => {
+    logging.info('surroundChanged: ' + value)
+    publish('surround', value)
+})
+  
+denonClient.on('zone1Changed', (value) => {
+    logging.info('zone1Changed: ' + value)
+    publish('zone1', value)
+})
+  
+denonClient.on('zone2Changed', (value) => {
+    logging.info('zone2Changed: ' + value)
+    publish('zone2', value)
+})
+  
+denonClient.on('zone3Changed', (value) => {
+    logging.info('zone3Changed: ' + value)
+    publish('zone3', value)
+})
+  
