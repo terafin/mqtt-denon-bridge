@@ -6,6 +6,7 @@ const _ = require('lodash')
 const logging = require('homeautomation-js-lib/logging.js')
 const mqtt_helpers = require('homeautomation-js-lib/mqtt_helpers.js')
 const Denon = require('denon-client');
+const interval = require('interval-promise')
 const queryInterval = 10
 
 const AVR_IP = process.env.AVR_IP
